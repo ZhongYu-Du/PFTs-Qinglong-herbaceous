@@ -86,7 +86,6 @@ China_overall = ggplot(data = china_pro) +
   theme_bw()+
   font+
   annotation_scale(location='bl') +
-  # 添加指北针
   annotation_north_arrow(location = "tl", which_north = "false",
                          style = north_arrow_fancy_orienteering) +
   geom_point(data = site, aes(x = Lat, y = Lon), color = "red", size = 2)
@@ -97,7 +96,7 @@ China_overall
 ####DEM
 xfun::dir_create("F:Thesis_data\\Method_map")
 
-chn_map <- raster::getData(name = "alt", res = 2.5, country = "CHN", mask = TRUE, path = "F:\\博士研究生\\Thesis_data\\Method_map")
+chn_map <- raster::getData(name = "alt", res = 2.5, country = "CHN", mask = TRUE, path = "F:\\Thesis_data\\Method_map")
 plot(chn_map)
 
 ####GZQL#####
@@ -115,7 +114,7 @@ site_gz <- subset(site, Site == "GZQL")
 
 map_GZQL <- ggplot()+
   geom_sf(data = qinglong, fill = NA, color = NA)+
-  annotation_north_arrow(location="tr", style = north_arrow_nautical(fill = c("grey40","white"),line_col = "grey20"))+  # 添加指北针
+  annotation_north_arrow(location="tr", style = north_arrow_nautical(fill = c("grey40","white"),line_col = "grey20"))+  
   geom_tile(data=data_GZQL,aes(x=Longitude, y=Latitude,fill=DEM),show.legend = T)+
   theme_few()+
   geom_point(data = site_gz, aes(x = Lat, y = Lon), size = 3) + 
@@ -1506,7 +1505,7 @@ model_Sb <- randomForest::randomForest(Sb ~ soilHMsPC1 + soilPC1 + soilPC1 + pmo
                                     data = data_scale_sem,
                                     ntree = 500,
                                     importance = T,
-                                    proximity = T)#计算各个观测之间的相似性
+                                    proximity = T)
 
 
 library(rfPermute)
@@ -1799,7 +1798,7 @@ original_C <- lmer(C ~ site + species + site * species + (1|block), data = subse
 Anova(original_C)
 
 
-# 控制 site, 看species
+# site,species
 post_C <- emmeans(original_C, ~ species|site, adjust = "tukey")
 comp_C <- contrast(post_C, method = "pairwise", adjust = "tukey")  %>% data.frame()  %>% mutate("Sig" = ifelse(p.value < 0.01, "**", ifelse(p.value < 0.05, "*", "")))
 comp_C
@@ -1998,7 +1997,7 @@ post_PCa <- emmeans(original_PCa, ~ site * species, adjust = "tukey")
 comp_PCa <- contrast(post_PCa, method = "pairwise", adjust = "tukey")  %>% data.frame()  %>% mutate("Sig" = ifelse(p.value < 0.01, "**", ifelse(p.value < 0.05, "*", "")))
 
 
-######   Sb (原始数据 log)
+######   Sb 
 ### C
 CSb <- lmer(log(Sb) ~ log(C) + (1|block) + (1|species), data = d3)
 summary(CSb)
